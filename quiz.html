@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Website</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+    </script>
+</head>
+
+<body style="font-family: Courier New;">
+    <nav class="navbar navbar-expand-lg navbar-light navbarColor">
+        <div class="container-fluid">
+            <img src="images/logo.png" height="26px" width="134px" class="" alt="...">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active navbarText" aria-current="page" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active navbarText" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Resources
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="programstructure.html">Basic program structure</a></li>
+                            <li><a class="dropdown-item" href="variabletypes.html">Variable types</a></li>
+                            <li><a class="dropdown-item" href="mathematicalcalculations.html">Mathematical
+                                    calculations</a></li>
+                            <li><a class="dropdown-item" href="printingtoscreen.html">Printing to screen</a></li>
+                            <li><a class="dropdown-item" href="selectionanditeration.html">Selection and Iteration</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active navbarText" aria-current="page" href="game.html">Game</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active navbarText" aria-current="page" href="quiz.html">Quiz</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active navbarText" aria-current="page" href="feedback.html">Feedback</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <a class="btn btn-outline-light" href="contactme.html" role="button">Contact Me</a>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Quiz HTML-->
+
+    <h1 class="quizTitle">Programming Quiz!</h1>
+    <div class="quiz-container">
+        <div id="quiz"></div>
+    </div>
+    <button id="previous" class="quizButtons">Previous Question</button>
+    <button id="next" class="quizButtons">Next Question</button>
+    <button onclick="alertBox()" id="submit" class="quizButtons">Submit Quiz</button>
+    <div id="results"></div>
+
+    <!-- Quiz HTML end -->
+    <!-- Quiz JS -->
+
+    <script>
+        (function () {
+            // Functions
+            function buildQuiz() {
+                // variable to store the HTML output
+                const output = [];
+
+                // for each question...
+                myQuestions.forEach(
+                    (currentQuestion, questionNumber) => {
+
+                        // variable to store the list of possible answers
+                        const answers = [];
+
+                        // and for each available answer...
+                        for (letter in currentQuestion.answers) {
+
+                            // ...add an HTML radio button
+                            answers.push(
+                                `<label>
+              <input type="radio" name="question${questionNumber}" value="${letter}">
+              ${letter} :
+              ${currentQuestion.answers[letter]}
+            </label>`
+                            );
+                        }
+
+                        // add this question and its answers to the output
+                        output.push(
+                            `<div class="slider">
+            <div class="question"> ${currentQuestion.question} </div>
+            <div class="answers"> ${answers.join("")} </div>
+          </div>`
+                        );
+                    }
+                );
+
+                // finally combine our output list into one string of HTML and put it on the page
+                quizContainer.innerHTML = output.join('');
+            }
+
+            function showResults() {
+
+                // gather answer containers from our quiz
+                const answerContainers = quizContainer.querySelectorAll('.answers');
+
+                // keep track of user's answers
+                let numCorrect = 0;
+
+                // for each question...
+                myQuestions.forEach((currentQuestion, questionNumber) => {
+
+                    // find selected answer
+                    const answerContainer = answerContainers[questionNumber];
+                    const selector = `input[name=question${questionNumber}]:checked`;
+                    const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+
+                    // if answer is correct
+                    if (userAnswer === currentQuestion.correctAnswer) {
+                        // add to the number of correct answers
+                        numCorrect++;
+
+                        // color the answers green
+                        answerContainers[questionNumber].style.color = '#9ce62a';
+                    }
+                    // if answer is wrong or blank
+                    else {
+                        // color the answers red
+                        answerContainers[questionNumber].style.color = '#ff0000';
+                    }
+                });
+
+                // show number of correct answers out of total
+                resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
+            }
+
+            function showSlide(n) {
+                slides[currentSlide].classList.remove('active-slider');
+                slides[n].classList.add('active-slider');
+                currentSlide = n;
+                if (currentSlide === 0) {
+                    previousButton.style.display = 'none';
+                } else {
+                    previousButton.style.display = 'inline-block';
+                }
+                if (currentSlide === slides.length - 1) {
+                    nextButton.style.display = 'none';
+                    submitButton.style.display = 'inline-block';
+                } else {
+                    nextButton.style.display = 'inline-block';
+                    submitButton.style.display = 'none';
+                }
+            }
+
+            function showNextSlide() {
+                showSlide(currentSlide + 1);
+            }
+
+            function showPreviousSlide() {
+                showSlide(currentSlide - 1);
+            }
+
+            // Variables
+            const quizContainer = document.getElementById('quiz');
+            const resultsContainer = document.getElementById('results');
+            const submitButton = document.getElementById('submit');
+            const myQuestions = [{
+                    question: "What is the definition of a computer program?",
+                    answers: {
+                        a: "A physical desktop computer",
+                        b: "A collection of web browsers",
+                        c: "A collection of instructions"
+                    },
+                    correctAnswer: "c"
+                },
+                {
+                    question: "What is a boolean?",
+                    answers: {
+                        a: "A programming language",
+                        b: "Used for a combination of any characters that appear on a keyboard",
+                        c: "Where data is restricted to True/False or yes/no options"
+                    },
+                    correctAnswer: "c"
+                },
+                {
+                    question: "Do some programming languages require more maths than others?",
+                    answers: {
+                        a: "Yes",
+                        b: "No",
+                    },
+                    correctAnswer: "a"
+                },
+                {
+                    question: "What does the print statement use to surround the data to be printed?",
+                    answers: {
+                        a: "Dollar symbols",
+                        b: "Brackets",
+                        c: "Hyphens",
+                        d: "Asterisks"
+                    },
+                    correctAnswer: "b"
+                },
+                {
+                    question: "In programming, selection is implemented using...",
+                    answers: {
+                        a: "Quotation marks",
+                        b: "Booleans",
+                        c: "IF THEN or IF THEN ELSE statements"
+                    },
+                    correctAnswer: "c"
+                }
+            ];
+
+            // Kick things off
+            buildQuiz();
+
+            // Pagination
+            const previousButton = document.getElementById("previous");
+            const nextButton = document.getElementById("next");
+            const slides = document.querySelectorAll(".slider");
+            let currentSlide = 0;
+
+            // Show the first slide
+            showSlide(currentSlide);
+
+            // Event listeners
+            submitButton.addEventListener('click', showResults);
+            previousButton.addEventListener("click", showPreviousSlide);
+            nextButton.addEventListener("click", showNextSlide);
+        })();
+
+        function alertBox() {
+            alert("Try out these free courses to boost your knowledge! https://www.freecodecamp.org/ ");
+        }
+    </script>
+
+    <!-- Footer -->
+    <footer class="text-center text-white footerBg fixed-bottom">
+        <!-- Grid container -->
+        <div class="container p-4 pb-0">
+            <!-- Section: Social media -->
+            <section class="mb-4">
+
+                <ul class="social-network social-circle">
+                    <li><a href="https://twitter.com/" class="icoTwitter" title="Twitter"><i
+                                class="fa fa-twitter"></i></a></li>
+                    <li><a href="www.linkedin.com/in/cheyenne-clark-career
+                        " class="icoLinkedin" title="Linkedin"><i class="fa fa-linkedin"></i></a></li>
+                    <li><a href="https://github.com/CheyenneClarkZone/Synoptic-Code" class="icoGithub" title="Github"><i
+                                class="fa fa-github"></i></a></li>
+                    <li><a href="https://www.google.co.uk/" class="icoGoogle" title="Google"><i
+                                class="fa fa-google"></i></a></li>
+                </ul>
+            </section>
+            <!-- Section: Social media -->
+
+        </div>
+        <!-- Grid container -->
+
+        <!-- Copyright -->
+        <div class="text-center p-3 copyrightBg" style="background-color: #00171f;">
+            © 2021 Copyright
+        </div>
+        <!-- Copyright -->
+    </footer>
+</body>
+
+</html>
