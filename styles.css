@@ -14,6 +14,11 @@
   .grid-item {
     font-size: 20px !important;
   }
+  .grid {
+    height: 200px !important;
+    width: 300px !important;
+    margin-top: 150px !important;
+  }
 }
 
 @media only screen and (max-width: 550px) {
@@ -252,4 +257,11 @@ body {
   padding: 20px;
   font-size: 30px;
   text-align: center;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  height: 300px;
+  width: 400px;
 }
